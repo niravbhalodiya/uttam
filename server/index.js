@@ -15,26 +15,25 @@ const adminRoutes = require("./router/adminRoutes")
 const authRoutes = require("./router/authRoutes")
 const User = require("./models/user");
 
-const store = new MongoDBStore({
-    uri: process.env.MONGO_URL,
-    collection: "sessions",
-});
+const upload = require("./utils")
+
+
 
 
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
+app.use(express.urlencoded({ extended: true }));
+// app.use('Content-Type', 'text/html');
 
 
 //Implementation of session
-app.use(
-    session({
-        secret: "Its complicated",
-        resave: false,
-        saveUninitialized: false,
-        store: store,
-    })
-);
+// app.use(
+//     session({
+//         secret: "Its complicated",
+//         resave: false,
+//         saveUninitialized: false,
+//         store: store,
+//     })
+// );
 
 // app.use((req, res, next) => {
 //     res.locals.isAuthenticated = req.session.isLoggedIn;
@@ -42,22 +41,22 @@ app.use(
 //     next();
 // });
 
-app.use((req, res, next) => {
-    //   console.log();
-    if (!req.session.user) {
-        return next();
-    }
-    User.findById(req.session.user._id)
-        .then((user) => {
-            req.user = user;
-            next();
-        })
-        .catch((err) => console.log(err));
-});
+// app.use((req, res, next) => {
+//     //   console.log();
+//     if (!req.session.user) {
+//         return next();
+//     }
+//     User.findById(req.session.user._id)
+//         .then((user) => {
+//             req.user = user;
+//             next();
+//         })
+//         .catch((err) => console.log(err));
+// });
 
 
 
-
+app.use(upload.array("files",5))
 //Routes
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);

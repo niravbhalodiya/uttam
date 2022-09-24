@@ -4,6 +4,9 @@ var jwt = require('jsonwebtoken');
 let crypto = require('crypto');
 const {sendMail} = require("../utils");
 
+const creteToken = (_id) => {
+    return jwt.sign({ _id }, process.env.TOKEN_KEY, { expiresIn: '1d' })
+}
 
 exports.login = async (req, res) => {
     const { email, password } = req.body;
@@ -12,19 +15,17 @@ exports.login = async (req, res) => {
     userModel.findOne({ email: email })
         .then(async (user) => {
             const isCorrectPass = await bcrypt.compare(password, user.password);
-            console.log(token)
+            // console.log(token)
             if (isCorrectPass) {
-                var token = await jwt.sign({user: user },"djsfnlakefnslefnswlkgnwrsefnwl");
-                req.session.isLoggedIn = true;
-                req.session.user = user;
-                await req.session.save();
-                res.send({token: token})
+                var token = creteToken(user._id)
+                // await req.session.save();
+                res.send({token: token,userId: user._id})
             } else {
-                res.send({message: "Error"});
+                res.status(401).send({message: "Error"});
             }
         })
         .catch((err) => {
-            res.send({message: "failed"})
+            res.status(401).send({message: "User with this email not found"})
             console.log(err)
         });
 }
@@ -38,11 +39,11 @@ exports.signUp = async (req, res) => {
     userModel.findOne({ email: email })
         .then(async (user) => {
             if (user) {
-                res.send("User already exists with this email");
+                res.status(400).send({message: "User already exists with this email"});
             } else {
                 try {
-                    var token = await jwt.sign({user: user },"djsfnlakefnslefnswlkgnwrsefnwl");
-                    const newUser = new userModel({
+                    
+                    const newUser = await userModel.create({
                         email,
                         password: hashedPassword,
                         userName,
@@ -50,10 +51,13 @@ exports.signUp = async (req, res) => {
                         points: 0,
                         role: "user"
                     });
-                    newUser.save();
-                    res.send({token: token});
+                    // newUser.save();
+                    var token = creteToken(newUser._id)
+
+                    // console.log(process.env.TOKEN_KEY)
+                    res.send({token: token,userId: newUser._id});
                 } catch (error) {
-                    res.send(`Unable to create user: ${error}`);
+                    res.status(401).send({message: "Unable to create user"});
                 }
 
             }
@@ -84,10 +88,10 @@ exports.askResetPassword = async (req, res) => {
                 res.send({message: "Email sent"});
 
             } else {
-                res.send({message: "User does not exist"});
+                res.status(400).send({message: "User does not exist"});
             }
         }).catch((err) => {
-            res.send({message: "Backend error: " + err});
+            res.status(401).send({message: "Backend error: " + err});
         });
 }
 
@@ -107,9 +111,15 @@ exports.resetPassword = async (req, res) => {
                 // sendMail(user.email, "Password Changed", "Your password has been changed");
                 res.send({message: "Password reset successful"});
             } else {
-                res.send({message: "Password reset link is invalid or has expired"});
+                res.status(400).send({message: "Password reset link is invalid or has expired"});
             }
         }).catch((err) => {
-            res.send({message: "Backend error: " + err});
+            res.status(401).send({message: "Backend error: " + err});
         });
+}
+
+exports.postLogout = async (req,res) => {
+    req.session.destroy((err) => {
+        res.send({message: "success"})
+      });
 }

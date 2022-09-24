@@ -1,6 +1,8 @@
 const multer = require("multer");
 const path = require("path");
 const nodemailer = require("nodemailer");
+const fs = require("fs");
+
 
 var storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -56,5 +58,16 @@ let sendMail = async(email, subject, text) => {
 }
 
 
+const deleteFile = (filePath) => {
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      throw err;
+    }
+  });
+};
+
+
+
 module.exports = upload;
 module.exports.sendMail = sendMail;
+module.exports.deleteFile = deleteFile;

@@ -1,15 +1,18 @@
+let bcrypt = require('bcrypt');
+const {deleteFile} = require("../utils")
+
 const Post = require("../models/posts");
 const Solution = require("../models/solutions");
 const Comment = require("../models/comments");
 
+// const User - 
 const upload = require("../utils")
-
-let userModel = require('../models/user');
-let bcrypt = require('bcrypt');
+let User = require('../models/user');
 
 
 const mongoose = require("mongoose");
-const user = require("../models/user");
+// const user = require("../models/user");
+// const { response } = require('express');
 
 exports.getUser = async(req,res) => {
     const {userId} = req.params;
@@ -22,47 +25,106 @@ exports.getUser = async(req,res) => {
         res.status(401).send({message: "Error getting user"})
     }
 }
-
+//Creates new post
 exports.createPost = async (req, res) => {
+    const image = req.files;
     const { title, description } = req.body;
     console.log(req.body.title);
     let images = [];
     try {
-        if (req.files) {
-            // console.log(req.files.length)
-            for (i = 0; i <= req.files.length - 1; i++) {
-                paths = req.files[i].path;
-                images.push(paths)
+        if (image) {
+            for (i = 0; i <= req.files.length -1; i++) {
+                fileName = req.files[i].filename;
+                imgPath = "uploads/" + fileName;
+                images.push(imgPath)
 
             }
         }
-        if(req.user) {
+        if (req.user) {
 
-            const post = await Post({ title, description, userId: mongoose.Types.ObjectId("5f97c071bad24d1a81b25dd1"), images: images,userId: req.user._id, upVotes: 0, downVotes: 0, status: "pending" });
+            const post = await Post({ title, description, images: images,userId: req.user._id, upVotes: 0, downVotes: 0, status: "pending" });
             post.save().then((result) => {
-                res.send({ status: res.statusCode, body: result })
+                res.send({ body: result })
             }).catch((err) => {
                 console.log(err)
+                // res.send({message: "no data"})
             })
         }
 
 
-        
     } catch (err) {
         console.log(err);
+        // return res.send({message: "no data"})
     }
+
+}
+//Delete single post
+exports.postDeletePost = async (req,res) => {
+    const postId = req.body.postId;
+    // console.log(postId);
+    try {
+        const post = await Post.findById(postId);
+        // console.log(post.images.length);
+        for(i=0; i <= post.images.length -1;i++ ) {
+
+            deleteFile(post.images[i])
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(401).send({message: "Error deleting post"})
+    }
+}
+//fetch single post
+exports.getEditPost = async (req, res) => {
+    // const { title, description } = req.body;
+
+    const postId = req.params.postId;
+
+    const posts = await Post.findById(postId);
+    res.send({ status: res.statusCode, data: posts });
 }
 
 
-
-exports.editPost = async(req,res) => {
-    const {title,description} = req.body;
+//Edit post
+exports.postEditPost = async (req, res) => {
+    // const { title, description } = req.body;
+    const postId = req.params.postId;
+    const updatedTitle = req.body.title;
+    const updatedDescription = req.body.description;
     
-
-
     
+    try {
+        let posts = await Post.findByIdAndUpdate(postId);
 
+        posts.title = updatedTitle;
+        posts.description = updatedDescription;
+        res.send({message: "success"})
 
+    } catch(err) {
+        console.log(err);
+        res.send({message: "some error occured"})
+    }
+
+}
+//Delete single post
+exports.postDeletePost = async (req,res) => {
+    const postId = req.body.postId;
+    // console.log(postId);
+    try {
+        const post = await Post.findById(postId);
+        // console.log(post.images.length);
+        for(i=0; i <= post.images.length -1;i++ ) {
+
+            deleteFile(post.images[i])
+        }
+        
+            // deleteFile("uploads/1664009659993.png")
+        
+        post.deleteOne({_id: postId});
+        res.send({message: "success"})
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 exports.postSolution = async(req,res) => {
@@ -199,6 +261,7 @@ exports.downVote = async(req,res) => {
                     // console.log(err)
                 })
     }
+    
 }
 
 exports.upVoteSolution = async(req,res) => {
@@ -236,6 +299,20 @@ exports.upVoteSolution = async(req,res) => {
                 })
         
     }
+}
+
+
+exports.getAllPosts = async (req,res) => {
+    const posts = await Post.find();
+
+    res.send({status: res.send.statusCode, data: posts});
+}
+
+
+exports.getSingleUser = async (req,res) => {
+    console.log(req.user)
+    const user  = await User.findOne();
+    res.status(200).send({data: user});
 }
 
 exports.downVoteSolution = async(req,res) => {
@@ -285,4 +362,5 @@ exports.updateSolutionStatus = async(req,res) => {
             res.status(401).send({message: "Error updating solution status"})
             // console.log(err)
         })
-}
+    }
+

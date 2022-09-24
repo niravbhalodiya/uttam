@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 
 // reducers
-import initialReducer from './initialReducer/slice'
+import AuthReducer from './auth/slice'
+import ChallengeReducer from './challenge/slice'
 
 export const store = configureStore({
     reducer: {
-        initial: initialReducer
+        auth: AuthReducer,
+        challenge: ChallengeReducer,
     }
 })

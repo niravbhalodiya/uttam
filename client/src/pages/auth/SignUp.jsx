@@ -3,8 +3,17 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { ErrorMsg } from '../../components/common/MicroComponents'
 import { Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { SignUpApi } from '../../store/auth/slice'
 
 const SignUp = () => {
+    const dispatch = useDispatch()
+
+    const handleSignUp = (values) => {
+        dispatch(SignUpApi(values))
+        console.log(values);
+        // SignUpApi(values)
+    }
 
     const formik = useFormik({
         enableReinitialize: true,
@@ -12,7 +21,7 @@ const SignUp = () => {
             name: "",
             userName: "",
             email: "",
-            password: null,
+            password: '',
         },
         validationSchema: Yup.object().shape({
             name: Yup.string().required('Name is Required').min(3),
@@ -21,7 +30,7 @@ const SignUp = () => {
             password: Yup.string().nullable().required('Password is Required').matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, 'Minimum eight characters, at least one letter, one number and one special character'),
         }),
         onSubmit: (values) => {
-            console.log(values);
+            handleSignUp(values)
         }
     })
 
@@ -29,7 +38,6 @@ const SignUp = () => {
 
     return (
         <div className="min-h-screen flex justify-center items-center">
-            {console.log(errors, touched)}
             <div className="container mx-auto px-4 h-full">
                 <div className="flex content-center items-center justify-center h-full ">
                     <div className="w-full lg:w-5/12 px-4">

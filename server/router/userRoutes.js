@@ -6,8 +6,9 @@ const userController = require("../controllers/userController");
 const uploads = require("../utils");
 
 
-router.post("/addpost", uploads.array("files", 5), userController.createPost);
-router.get("/editPost/:id", userController.editPost);
+router.post("/add-post", uploads.array("files", 5), userController.createPost);
+router.get("/edit-post/:id", userController.editPost);
+router.post("/upvote", userController.upVote);
 
 
 module.exports = router;

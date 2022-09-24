@@ -36,6 +36,12 @@ const postSchema = new Schema({
     downVotes:{
         type: Number,
     },
+    upVoters: [{
+        type: Schema.Types.ObjectId,
+    }],
+    downVoters: [{
+        type: Schema.Types.ObjectId,
+    }],
 },{timestamps: true})
 
 

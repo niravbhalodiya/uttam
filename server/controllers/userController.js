@@ -30,7 +30,7 @@ exports.signUp = async(req, res) => {
                         userName,
                         name,
                         points: 0,
-                        role: "moderator"
+                        role: "user"
                     });
                     newUser.save();
                     res.send("User created!");

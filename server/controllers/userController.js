@@ -88,4 +88,24 @@ exports.signUp = async(req, res) => {
             res.send("Backend error");
         });
 }
-// 
+
+exports.askResetPassword = async(req, res) => {
+    const {email} = req.body;
+
+    userModel.findOne({email:email})
+        .then((user) => {
+            if(user){
+                try {
+                    // Send email to user with reset password link
+                    
+                } catch (error) {
+                    res.send(`unable to send email: ${error}`);
+                }
+            } else {
+                res.send("User does not exist");
+            }
+        })
+        .catch((err) => {
+            res.send("Backend error");
+        });
+}

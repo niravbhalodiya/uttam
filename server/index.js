@@ -60,6 +60,7 @@ app.use(upload.array("files",5))
 //Routes
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
 
 
 

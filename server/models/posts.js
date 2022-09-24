@@ -23,11 +23,11 @@ const postSchema = new Schema({
         ref: "Posts"
     },
     comments: [{
-        type: String,
+        type: Schema.Types.ObjectId,
         ref: "Comments"
     }],
     solutions : [{
-        type: String,
+        type: Schema.Types.ObjectId,
         ref: "Solutions"
     }],
     upVotes:{
@@ -41,6 +41,19 @@ const postSchema = new Schema({
     }],
     downVoters: [{
         type: Schema.Types.ObjectId,
+    }],
+    status: {
+        type: String,
+        required: true,
+    },
+    points: {
+        type: Number
+    },
+    categories: [{
+        type: String,
+    }],
+    tags: [{
+        type: String,
     }],
 },{timestamps: true})
 

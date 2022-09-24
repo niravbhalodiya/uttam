@@ -5,10 +5,10 @@ const userController = require("../controllers/userController");
 
 const uploads = require("../utils");
 
-const userController = require("../controllers/userController")
-
 
 router.post("/addpost", uploads.array("files", 5), userController.createPost);
+router.post("/signup", userController.signUp);
+router.post("/login", userController.login);
 
 
 

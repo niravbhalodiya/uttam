@@ -7,8 +7,6 @@ const uploads = require("../utils");
 
 
 router.post("/addpost", uploads.array("files", 5), userController.createPost);
-router.post("/signup", userController.signUp);
-router.post("/login", userController.login);
 
 
 

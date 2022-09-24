@@ -10,11 +10,9 @@ const app = express();
 //Local Imports
 const userRoutes = require("./router/userRoutes")
 const adminRoutes = require("./router/adminRoutes")
-const upload = require("./utils")
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended: true}));
-// app.use(upload.array("file",5))
 
 
 app.use("/api/user",userRoutes);

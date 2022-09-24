@@ -6,20 +6,19 @@ const mongoose = require("mongoose");
 const session = require('express-session');
 const MongoDBStore = require("connect-mongodb-session")(session);
 require("dotenv").config();
-const {sendMail} = require("./utils");
 
 const app = express();
 
 //Local Imports
 const userRoutes = require("./router/userRoutes")
 const adminRoutes = require("./router/adminRoutes")
+const authRoutes = require("./router/authRoutes")
 const User = require("./models/user");
 
 const store = new MongoDBStore({
     uri: process.env.MONGO_URL,
     collection: "sessions",
 });
-
 
 
 app.use(express.json());
@@ -36,6 +35,13 @@ app.use(
         store: store,
     })
 );
+
+// app.use((req, res, next) => {
+//     res.locals.isAuthenticated = req.session.isLoggedIn;
+//     res.locals.csrfToken = req.csrfToken();
+//     next();
+// });
+
 app.use((req, res, next) => {
     //   console.log();
     if (!req.session.user) {
@@ -51,12 +57,12 @@ app.use((req, res, next) => {
 
 
 
+
 //Routes
 app.use("/api/user", userRoutes);
-app.use("/api/admin", adminRoutes);
-// app.use("/api/admin",adminRoutes);
+app.use("/api/auth", authRoutes);
 
-sendMail("thauhid.71@gmail.com", "Hello", "Hello World");
+
 
 
 mongoose.connect(process.env.MONGO_URL).then((res) => {

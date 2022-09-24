@@ -17,8 +17,6 @@ exports.login = async (req, res) => {
                 var token = await jwt.sign({userId: user._id },process.env.TOKEN_KEY,{
                     expiresIn: "10h"
                 });
-                req.session.isLoggedIn = true;
-                req.session.user = user;
                 await req.session.save();
                 res.send({token: token,userId: user._id})
             } else {
@@ -40,7 +38,7 @@ exports.signUp = async (req, res) => {
     userModel.findOne({ email: email })
         .then(async (user) => {
             if (user) {
-                res.send("User already exists with this email");
+                res.send({message: "User already exists with this email"});
             } else {
                 try {
                     
@@ -59,7 +57,7 @@ exports.signUp = async (req, res) => {
                     console.log(process.env.TOKEN_KEY)
                     res.send({token: token,userId: newUser._id});
                 } catch (error) {
-                    res.send(`Unable to create user: ${error}`);
+                    res.send({message: "Unable to create user"});
                 }
 
             }

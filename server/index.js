@@ -16,10 +16,7 @@ const adminRoutes = require("./router/adminRoutes")
 const authRoutes = require("./router/authRoutes")
 const User = require("./models/user");
 
-const store = new MongoDBStore({
-    uri: process.env.MONGO_URL,
-    collection: "sessions",
-});
+
 
 
 app.use(express.json());

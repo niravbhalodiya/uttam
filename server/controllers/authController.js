@@ -12,13 +12,15 @@ exports.login = async (req, res) => {
     userModel.findOne({ email: email })
         .then(async (user) => {
             const isCorrectPass = await bcrypt.compare(password, user.password);
-            console.log(token)
+            // console.log(token)
             if (isCorrectPass) {
-                var token = await jwt.sign({user: user },"djsfnlakefnslefnswlkgnwrsefnwl");
+                var token = await jwt.sign({userId: user._id },process.env.TOKEN_KEY,{
+                    expiresIn: "10h"
+                });
                 req.session.isLoggedIn = true;
                 req.session.user = user;
                 await req.session.save();
-                res.send({token: token})
+                res.send({token: token,userId: user._id})
             } else {
                 res.send({message: "Error"});
             }
@@ -41,8 +43,8 @@ exports.signUp = async (req, res) => {
                 res.send("User already exists with this email");
             } else {
                 try {
-                    var token = await jwt.sign({user: user },"djsfnlakefnslefnswlkgnwrsefnwl");
-                    const newUser = new userModel({
+                    
+                    const newUser = await userModel.create({
                         email,
                         password: hashedPassword,
                         userName,
@@ -50,8 +52,12 @@ exports.signUp = async (req, res) => {
                         points: 0,
                         role: "user"
                     });
-                    newUser.save();
-                    res.send({token: token});
+                    // newUser.save();
+                    var token = await jwt.sign({userId: newUser._id },process.env.TOKEN_KEY,{
+                        expiresIn: "10h"
+                    });
+                    console.log(process.env.TOKEN_KEY)
+                    res.send({token: token,userId: newUser._id});
                 } catch (error) {
                     res.send(`Unable to create user: ${error}`);
                 }

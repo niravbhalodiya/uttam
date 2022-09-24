@@ -1,10 +1,14 @@
 let userModel = require('../models/user');
+let bcrypt = require('bcrypt');
 
 exports.login = async(req, res) => {
     const {email, password} = req.body;
+
     userModel.findOne({email:email})
-        .then((user) => {
-            if(user.password === password){
+    .then( async (user) => {
+            const isCorrectPass = await bcrypt.compare(password, user.password);
+
+            if(isCorrectPass){
                 res.send(true);
             } else {
                 res.send(false);
@@ -18,6 +22,9 @@ exports.login = async(req, res) => {
 exports.signUp = async(req, res) => {
     const {email, password, userName, name} = req.body;
 
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     userModel.findOne({email:email})
         .then((user) => {
             if(user){
@@ -26,7 +33,7 @@ exports.signUp = async(req, res) => {
                 try {
                     const newUser = new userModel({
                         email,
-                        password,
+                        password: hashedPassword,
                         userName,
                         name,
                         points: 0,

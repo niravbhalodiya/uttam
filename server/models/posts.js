@@ -9,7 +9,6 @@ const postSchema = new Schema({
     },
     images: [{
         type: String,
-        required: true,
     },],
     description: {
         type: String,
@@ -19,16 +18,16 @@ const postSchema = new Schema({
     //     type: String,
     //     required: true,
     // },
-    postedById: [{
+    userId: {
         type: Schema.Types.ObjectId,
         ref: "Posts"
-    }],
+    },
     comments: [{
         type: String,
         ref: "Comments"
     }],
     solutions : [{
-        // type: String,
+        type: String,
         ref: "Solutions"
     }],
     upVotes:{

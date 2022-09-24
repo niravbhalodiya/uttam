@@ -6,6 +6,7 @@ const userSchema = new Schema({
     userName: {
         type: String,
         required: true,
+        unique: true,
     },
     name: {
         type: String,
@@ -14,6 +15,7 @@ const userSchema = new Schema({
     email: {
         type: String,
         required: true,
+        unique: true,
     },
     password: {
         type: String,
@@ -23,9 +25,6 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Posts"
     }],
-    profilePic: {
-        type: String,
-    },
     points: {
         type: Number,
     },

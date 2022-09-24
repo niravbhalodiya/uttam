@@ -2,9 +2,13 @@ const express = require("express");
 const router = express.Router();
 
 
-router.get("/",(req,res) => {
-    res.send("Hello");
-})
+const uploads = require("../utils");
+
+// const adminController = require("../controllers/adminController");
+const userController = require("../controllers/userController")
+
+
+router.post("/addpost", uploads.array("files",5) ,userController.createPost);
 
 
 

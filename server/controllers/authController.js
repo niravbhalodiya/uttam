@@ -60,4 +60,11 @@ exports.signUp = async (req, res) => {
             res.send("Backend error");
         });
 }
-// 
+
+
+
+exports.postLogout = async (req,res) => {
+    req.session.destroy((err) => {
+        res.send({message: "success"})
+      });
+}

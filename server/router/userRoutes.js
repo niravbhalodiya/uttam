@@ -7,7 +7,9 @@ const uploads = require("../utils");
 
 
 router.post("/addpost", uploads.array("files", 5), userController.createPost);
-router.get("/editPost/:id", userController.editPost);
+router.get("/editpost/:postId", userController.getEditPost);
+router.post("/editpost/:postId", userController.postEditPost);
+router.post("/delete-post", userController.postDeletePost);
 
 
 module.exports = router;

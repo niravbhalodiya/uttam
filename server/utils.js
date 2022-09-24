@@ -4,12 +4,12 @@ const nodemailer = require("nodemailer");
 
 var storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "uploads/");
+        cb(null, "uploads");
     },
     filename: (req, file, cb) => {
         let ext = path.extname(file.originalname);
         // console.log(file.originalname);
-        cb(null, + Date.now() + ext);
+        cb(null, file.originalname + Date.now() + ext);
     }
 });
 
@@ -22,9 +22,6 @@ var upload = multer({
         } else {
             cb(null, false);
         }
-    },
-    limits: {
-        fileSize: 100000,
     }
 },)
 

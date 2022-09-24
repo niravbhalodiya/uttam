@@ -9,13 +9,15 @@ const app = express();
 
 //Local Imports
 const userRoutes = require("./router/userRoutes")
+const adminRoutes = require("./router/adminRoutes")
 
 
 app.use(bodyParser.urlencoded({extended: true}));
 
 
 
-app.use(userRoutes);
+app.use("/api/user",userRoutes);
+app.use("/api/admin",adminRoutes);
 
 
 

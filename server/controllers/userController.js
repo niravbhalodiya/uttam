@@ -3,19 +3,21 @@ const {deleteFile} = require("../utils")
 
 
 const Post = require("../models/posts");
+// const User - 
 const upload = require("../utils")
-let userModel = require('../models/user');
+let User = require('../models/user');
 
 
 const mongoose = require("mongoose");
 const user = require("../models/user");
-const { response } = require('express');
+// const { response } = require('express');
 
 //Creates new post
 exports.createPost = async (req, res) => {
+    // console.log("gchfs" ,req.body)
     const { title, description } = req.body;
     const image = req.files;
-    console.log(req.files)
+    // console.log(req.body.title);
     let images = [];
     try {
         if (image) {
@@ -30,16 +32,17 @@ exports.createPost = async (req, res) => {
 
             const post = await Post({ title, description, images: images,userId: req.user._id, upVotes: 0, downVotes: 0 });
             post.save().then((result) => {
-                res.send({ status: res.statusCode, body: result })
+                res.send({ body: result })
             }).catch((err) => {
                 console.log(err)
+                // res.send({message: "no data"})
             })
         }
 
 
-
     } catch (err) {
         console.log(err);
+        // return res.send({message: "no data"})
     }
 }
 
@@ -79,6 +82,7 @@ exports.postEditPost = async (req, res) => {
 //Delete single post
 exports.postDeletePost = async (req,res) => {
     const postId = req.body.postId;
+    // console.log(postId);
     try {
         const post = await Post.findById(postId);
         // console.log(post.images.length);
@@ -136,6 +140,12 @@ exports.upVote = async(req,res) => {
 exports.getAllPosts = async (req,res) => {
     const posts = await Post.find();
 
-    res.send({status: res.send.statusCode, message: posts});
+    res.send({status: res.send.statusCode, data: posts});
 }
 
+
+exports.getSingleUser = async (req,res) => {
+    console.log(req.user)
+    const user  = await User.findOne();
+    res.status(200).send({data: user});
+}

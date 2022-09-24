@@ -12,13 +12,13 @@ const verifyToken = (req, res, next) => {
     // console.log(authorization);
     const token = authorization.split(" ")[1]
 
-    console.log(jwt.verify(token, process.env.TOKEN_KEY));
+    // console.log(jwt.verify(token, process.env.TOKEN_KEY));
   try {
     const decoded = jwt.verify(token, process.env.TOKEN_KEY)
 
     req.user = decoded;
   } catch (error) {
-    return res.status(401).send("Invalid Token");
+    return res.status(401).send({message : "Invalid Token"});
   }
     next();
 };

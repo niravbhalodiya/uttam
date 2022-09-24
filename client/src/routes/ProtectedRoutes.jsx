@@ -12,7 +12,7 @@ const ProtectedRoutes = () => {
         const isAuthenticated = localStorage.getItem(ACCESS_TOKEN)
 
         if (!isAuthenticated) {
-            navigate('/auth')
+            navigate('/auth/signin')
         }
 
         // dispatch(registrationStatus(localStorage.getItem(MOBILE_NO))).then(res => {

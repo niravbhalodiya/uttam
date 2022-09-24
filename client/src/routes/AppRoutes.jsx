@@ -1,5 +1,8 @@
 import React, { Suspense } from 'react'
 import { Route, Routes } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 // layouts
 import DefaultLayout from '../layouts/default'
 import AuthLayout from '../layouts/auth'
@@ -15,12 +18,15 @@ import AskQuestion from '../pages/AskQuestion'
 const AppRoutes = () => {
     return (
         <Suspense fallback={'Loading...'}>
+            <ToastContainer />
             <Routes>
                 <Route index element={<Home />} />
                 <Route element={<DefaultLayout />}>
                     <Route path='/challenges' element={<Challenge />} />
                     <Route path='/challenges/ask' element={<AskQuestion />} />
-                    <Route element={<ProtectedRoutes />}>
+                </Route>
+                <Route element={<ProtectedRoutes />}>
+                    <Route element={<DefaultLayout />}>
                         <Route path='dashboard/*' element={<Dashboard />} />
                     </Route>
                 </Route>

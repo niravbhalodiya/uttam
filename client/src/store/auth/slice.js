@@ -1,10 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosApi } from "../../utils/Axios";
+import { ACCESS_TOKEN, USER_ID } from "../../utils/constants";
 import state from "./state";
+import { toast } from 'react-toastify'
 
 export const SignInApi = createAsyncThunk('SignInApi', async (payload, { rejectWithValue }) => {
     try {
-        const res = axiosApi.post('/user/login', payload)
+        const res = axiosApi.post('/auth/login', payload)
         return res
     } catch (error) {
         console.log(error);
@@ -13,7 +15,11 @@ export const SignInApi = createAsyncThunk('SignInApi', async (payload, { rejectW
 
 export const SignUpApi = createAsyncThunk('SignUpApi', async (payload, { rejectWithValue }) => {
     try {
-        const res = axiosApi.post('/user/signup', payload)
+        const res = await axiosApi.post('/auth/signup', payload)
+        const { token, userId } = res
+        sessionStorage.setItem(ACCESS_TOKEN, token)
+        sessionStorage.setItem(USER_ID, userId)
+        navigate('/challenges')
         return res
     } catch (error) {
         console.log(error);
@@ -50,11 +56,13 @@ const AuthReducer = createSlice({
             state.status = 'succeed'
             state.user = action.payload
             state.type = 'SIGN_UP_API'
+            toast.success('Sign up successfully')
         },
         [SignUpApi.rejected]: (state, action) => {
             state.status = 'failed'
-            state.error = action.payload.errorMessage
+            state.error = action.payload.message
             state.type = 'SIGN_UP_API'
+            toast.error(action.payload.message)
         },
     },
     reducers: {

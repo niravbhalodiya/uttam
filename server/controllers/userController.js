@@ -1,91 +1,132 @@
+let bcrypt = require('bcrypt');
+const {deleteFile} = require("../utils")
+
+
 const Post = require("../models/posts");
 const upload = require("../utils")
-
 let userModel = require('../models/user');
-let bcrypt = require('bcrypt');
 
 
 const mongoose = require("mongoose");
+const user = require("../models/user");
 
-
-exports.createPost = async (req,res) => {
-    const {title,description,userId} = req.body;
+//Creates new post
+exports.createPost = async (req, res) => {
+    const { title, description } = req.body;
 
     let images = [];
     try {
-    if(req.files) {
-        console.log(req.files.length)
-        for(i = 0; i <= req.files.length-1; i++) {
-            paths = req.files[i].path;
-            images.push(paths)
+        if (req.files) {
+            // console.log(req.files.length)
+            for (i = 0; i <= req.files.length - 1; i++) {
+                paths = req.files[i].path;
+                images.push(paths)
 
+            }
         }
-    }
+        if (req.user) {
 
-    const post = await Post({title,description,userId: mongoose.Types.ObjectId("5f97c071bad24d1a81b25dd1"),images: images});
+            const post = await Post({ title, description, userId: mongoose.Types.ObjectId("5f97c071bad24d1a81b25dd1"), images: images,userId: req.user._id, upVotes: 0, downVotes: 0 });
+            post.save().then((result) => {
+                res.send({ status: res.statusCode, body: result })
+            }).catch((err) => {
+                console.log(err)
+            })
+        }
 
 
-    post.save().then((result) => {
-        console.log(result);
-        res.send({status: res.statusCode, body: result})
-    }).catch((err) => {
-        console.log(err)
-    })
-    } catch(err) {
+
+    } catch (err) {
         console.log(err);
     }
 }
 
 
+//fetch single post
+exports.getEditPost = async (req, res) => {
+    // const { title, description } = req.body;
 
-exports.login = async(req, res) => {
-    const {email, password} = req.body;
+    const postId = req.params.postId;
 
-    userModel.findOne({email:email})
-    .then( async (user) => {
-            const isCorrectPass = await bcrypt.compare(password, user.password);
-
-            if(isCorrectPass){
-                res.send(true);
-            } else {
-                res.send(false);
-            }
-        })
-        .catch(() => {
-            res.send(false)
-        });
+    const posts = await Post.findById(postId);
+    res.send({ status: res.statusCode, data: posts });
 }
 
-exports.signUp = async(req, res) => {
-    const {email, password, userName, name} = req.body;
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+//Edit post
+exports.postEditPost = async (req, res) => {
+    // const { title, description } = req.body;
+    const postId = req.params.postId;
+    const updatedTitle = req.body.title;
+    const updatedDescription = req.body.description;
+    
+    
+    try {
+        let posts = await Post.findByIdAndUpdate(postId);
 
-    userModel.findOne({email:email})
-        .then((user) => {
-            if(user){
-                res.send("User already exists with this email");
-            } else {
-                try {
-                    const newUser = new userModel({
-                        email,
-                        password: hashedPassword,
-                        userName,
-                        name,
-                        points: 0,
-                        role: "user"
-                    });
-                    newUser.save();
-                    res.send("User created!");
-                } catch (error) {
-                    res.send(`Unable to create user: ${error}`);
-                }
-                
-            }
-        })
-        .catch((err) => {
-            res.send("Backend error");
-        });
+        posts.title = updatedTitle;
+        posts.description = updatedDescription;
+        res.send({message: "success"})
+
+    } catch(err) {
+        console.log(err);
+        res.send({message: "some error occured"})
+    }
+
 }
-// 
+//Delete single post
+exports.postDeletePost = async (req,res) => {
+    const postId = req.body.postId;
+    try {
+        const post = await Post.findById(postId);
+        // console.log(post.images.length);
+        for(i=0; i <= post.images.length -1;i++ ) {
+
+            deleteFile(post.images[i])
+        }
+        
+            // deleteFile("uploads/1664009659993.png")
+        
+        post.deleteOne({_id: postId});
+        res.send({message: "success"})
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+exports.upVote = async(req,res) => {
+    const {postId} = req.body;
+    const {userId} = req.session.user._id;
+
+    const post = await Post.findById(postId);
+
+    // check if user has already upvoted
+    if(post.upVoters.includes(userId)) {
+        res.send({status: res.statusCode, body: "User has already upvoted this post"})
+    } else {
+        // check if user has already downvoted
+        if(post.downVoters.includes(userId)) {
+            // remove user from downvoters
+            post.downVoters = post.downVoters.filter((user) => user != userId);
+            
+            // decrese downvotes by 1
+            post.downVotes -= 1;
+        }
+            // increase upvotes
+            post.upVotes += 1;
+
+            // add user to upvoters
+            post.upVoters.push(userId);
+
+            // save post
+            post.save()
+                .then((result) => {
+                    res.send({status: res.statusCode, body: result, message: "Post upvoted"})
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+        
+    }
+}
+

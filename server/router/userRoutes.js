@@ -6,10 +6,11 @@ const userController = require("../controllers/userController");
 const uploads = require("../utils");
 
 
-router.post("/addpost", uploads.array("files", 5), userController.createPost);
-router.post("/signup", userController.signUp);
-router.post("/login", userController.login);
-
+router.post("/add-post", uploads.array("files", 5), userController.createPost);
+router.get("/editpost/:postId", userController.getEditPost);
+router.post("/editpost/:postId", userController.postEditPost);
+router.post("/delete-post", userController.postDeletePost);
+router.post("/upvote", userController.upVote);
 
 
 module.exports = router;

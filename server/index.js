@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const session = require('express-session');
 const MongoDBStore = require("connect-mongodb-session")(session);
 require("dotenv").config();
+const {sendMail} = require("./utils");
 
 const app = express();
 
@@ -18,6 +19,7 @@ const store = new MongoDBStore({
     uri: process.env.MONGO_URL,
     collection: "sessions",
 });
+
 
 
 app.use(express.json());
@@ -51,9 +53,10 @@ app.use((req, res, next) => {
 
 //Routes
 app.use("/api/user", userRoutes);
+app.use("/api/admin", adminRoutes);
 // app.use("/api/admin",adminRoutes);
 
-
+sendMail("thauhid.71@gmail.com", "Hello", "Hello World");
 
 
 mongoose.connect(process.env.MONGO_URL).then((res) => {

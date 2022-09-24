@@ -1,3 +1,4 @@
+let transporter 
 
 exports.login = async (req, res) => {
     const { email, password } = req.body;
@@ -52,4 +53,4 @@ exports.signUp = async (req, res) => {
             res.send("Backend error");
         });
 }
-// 
+

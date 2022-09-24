@@ -9,7 +9,7 @@ const mongoose = require("mongoose");
 
 
 exports.createPost = async (req, res) => {
-    const { title, description, userId } = req.body;
+    const { title, description } = req.body;
 
     let images = [];
     try {
@@ -36,4 +36,16 @@ exports.createPost = async (req, res) => {
     } catch (err) {
         console.log(err);
     }
+}
+
+
+
+exports.editPost = async(req,res) => {
+    const {title,description} = req.body;
+    
+
+
+    
+
+
 }

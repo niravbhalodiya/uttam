@@ -53,13 +53,13 @@ exports.editPost = async(req,res) => {
 
 exports.upVote = async(req,res) => {
     const {postId} = req.body;
-    const {userId} = req.session.user._id;
+    const userId = req.user._id;
 
     const post = await Post.findById(postId);
 
     // check if user has already upvoted
     if(post.upVoters.includes(userId)) {
-        res.send({status: res.statusCode, body: "User has already upvoted this post"})
+        res.send({status: res.statusCode, message: "User has already upvoted this post"})
     } else {
         // check if user has already downvoted
         if(post.downVoters.includes(userId)) {
@@ -84,5 +84,40 @@ exports.upVote = async(req,res) => {
                     console.log(err)
                 })
         
+    }
+}
+
+exports.downVote = async(req,res) => {
+    const {postId} = req.body;
+    const userId = req.user._id;
+
+    const post = await Post.findById(postId);
+
+    // check if user has already downvoted
+    if(post.downVoters.includes(userId)) {
+        res.send({status: res.statusCode, message: "User has already downvoted this post"})
+    } else {
+        // check if user has already upvoted
+        if(post.upVoters.includes(userId)) {
+            // remove user from upvoters
+            post.upVoters = post.upVoters.filter((user) => user != userId);
+            
+            // decrese upvotes by 1
+            post.upVotes -= 1;
+        }
+            // increase downvotes
+            post.downVotes += 1;
+
+            // add user to downvoters
+            post.downVoters.push(userId);
+
+            // save post
+            post.save()
+                .then((result) => {
+                    res.send({status: res.statusCode, body: result, message: "Post downvoted"})
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
     }
 }

@@ -9,24 +9,26 @@ let userModel = require('../models/user');
 
 const mongoose = require("mongoose");
 const user = require("../models/user");
+const { response } = require('express');
 
 //Creates new post
 exports.createPost = async (req, res) => {
     const { title, description } = req.body;
-
+    const image = req.files;
+    console.log(req.files)
     let images = [];
     try {
-        if (req.files) {
-            // console.log(req.files.length)
-            for (i = 0; i <= req.files.length - 1; i++) {
-                paths = req.files[i].path;
-                images.push(paths)
+        if (image) {
+            for (i = 0; i <= req.files.length -1; i++) {
+                fileName = req.files[i].filename;
+                imgPath = "uploads/" + fileName;
+                images.push(imgPath)
 
             }
         }
         if (req.user) {
 
-            const post = await Post({ title, description, userId: mongoose.Types.ObjectId("5f97c071bad24d1a81b25dd1"), images: images,userId: req.user._id, upVotes: 0, downVotes: 0 });
+            const post = await Post({ title, description, images: images,userId: req.user._id, upVotes: 0, downVotes: 0 });
             post.save().then((result) => {
                 res.send({ status: res.statusCode, body: result })
             }).catch((err) => {
@@ -128,5 +130,12 @@ exports.upVote = async(req,res) => {
                 })
         
     }
+}
+
+
+exports.getAllPosts = async (req,res) => {
+    const posts = await Post.find();
+
+    res.send({status: res.send.statusCode, message: posts});
 }
 

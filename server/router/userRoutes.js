@@ -7,7 +7,9 @@ const uploads = require("../utils");
 
 
 router.post("/add-post", uploads.array("files", 5), userController.createPost);
-router.get("/edit-post/:id", userController.editPost);
+router.get("/editpost/:postId", userController.getEditPost);
+router.post("/editpost/:postId", userController.postEditPost);
+router.post("/delete-post", userController.postDeletePost);
 router.post("/upvote", userController.upVote);
 
 

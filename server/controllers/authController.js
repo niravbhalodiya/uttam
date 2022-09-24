@@ -113,3 +113,9 @@ exports.resetPassword = async (req, res) => {
             res.send({message: "Backend error: " + err});
         });
 }
+
+exports.postLogout = async (req,res) => {
+    req.session.destroy((err) => {
+        res.send({message: "success"})
+      });
+}

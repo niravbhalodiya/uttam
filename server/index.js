@@ -15,12 +15,14 @@ const adminRoutes = require("./router/adminRoutes")
 const authRoutes = require("./router/authRoutes")
 const User = require("./models/user");
 
+const upload = require("./utils")
+
 
 
 
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
+app.use(express.urlencoded({ extended: true }));
+// app.use('Content-Type', 'text/html');
 
 
 //Implementation of session
@@ -54,7 +56,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
-
+app.use(upload.array("files",5))
 //Routes
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);

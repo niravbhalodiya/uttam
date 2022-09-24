@@ -1,26 +1,30 @@
 const jwt = require("jsonwebtoken")
+const User = require("../models/user");
 
-const verifyToken = (req, res, next) => {
+const auth = async (req, res, next) => {
     // if (!req.session.isLoggedIn) {
         // return res.redirect("/login");
     // }
     const {authorization} = req.headers;
+    // console.log(authorization)
 
     if (!authorization) return res.status(401).json({
         error: "Authorization token required."
     })
-    // console.log(authorization);
     const token = authorization.split(" ")[1]
+    // console.log(token);
 
     // console.log(jwt.verify(token, process.env.TOKEN_KEY));
   try {
-    const decoded = jwt.verify(token, process.env.TOKEN_KEY)
-
-    req.user = decoded;
+    const {_id} = jwt.verify(token, process.env.TOKEN_KEY)
+    req.user = {_id};
+    console.log("this is body",req.body)
+    next()
   } catch (error) {
-    return res.status(401).send({message : "Invalid Token"});
+     res.status(401).json({message : "Invalid Token"});
+     return;
   }
-    next();
+    // next();
 };
 
-module.exports = verifyToken;
+module.exports = auth;

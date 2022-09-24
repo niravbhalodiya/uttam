@@ -10,14 +10,16 @@ import Home from '../pages/Home'
 import Dashboard from '../pages/admin/Dashboard'
 import ProtectedRoutes from './ProtectedRoutes'
 import Challenge from '../pages/Challenges'
+import AskQuestion from '../pages/AskQuestion'
 
 const AppRoutes = () => {
     return (
         <Suspense fallback={'Loading...'}>
             <Routes>
-                <Route path='/challenges' element={<Challenge />} />
+                <Route index element={<Home />} />
                 <Route element={<DefaultLayout />}>
-                    <Route index element={<Home />} />
+                    <Route path='/challenges' element={<Challenge />} />
+                    <Route path='/challenges/ask' element={<AskQuestion />} />
                     <Route element={<ProtectedRoutes />}>
                         <Route path='dashboard/*' element={<Dashboard />} />
                     </Route>

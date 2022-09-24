@@ -11,7 +11,7 @@ const app = express();
 const userRoutes = require("./router/userRoutes")
 const adminRoutes = require("./router/adminRoutes")
 
-
+app.use(express.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 

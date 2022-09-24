@@ -23,9 +23,9 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Posts"
     }],
-    profilePic: {
-        type: String,
-    },
+    // profilePic: {
+    //     type: String,
+    // },
     points: {
         type: Number,
     },

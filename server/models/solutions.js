@@ -36,6 +36,10 @@ const solutionSchema = new Schema({
     downVoters: [{
         type: Schema.Types.ObjectId,
     }],
+    comments: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Comment'
+    }]
     
 },{timestamps:true});
 

@@ -59,7 +59,7 @@ exports.signUp = async (req, res) => {
                     // console.log(process.env.TOKEN_KEY)
                     res.send({token: token,userId: newUser._id});
                 } catch (error) {
-                    res.status(401).send({message: "Unable to create user"});
+                    res.status(401).send({message: "Username or email must not be same"});
                 }
             }
         })
@@ -97,8 +97,7 @@ exports.askResetPassword = async (req, res) => {
 }
 
 exports.resetPassword = async (req, res) => {
-    const { password } = req.body;
-    const {token} = req.params;
+    const { password, token } = req.body;
 
     userModel.findOne({ resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } })
         .then(async (user) => {
@@ -109,7 +108,7 @@ exports.resetPassword = async (req, res) => {
                 user.resetPasswordToken = undefined;
                 user.resetPasswordExpires = undefined;
                 await user.save();
-                // sendMail(user.email, "Password Changed", "Your password has been changed");
+                //sendMail(user.email, "Password Changed", "Your password has been changed");
                 res.send({message: "Password reset successful"});
             } else {
                 res.status(400).send({message: "Password reset link is invalid or has expired"});
@@ -123,4 +122,18 @@ exports.postLogout = async (req,res) => {
     req.session.destroy((err) => {
         res.send({message: "success"})
       });
+}
+
+exports.isUserNameAvailable = async (req, res) => {
+    const { userName } = req.body;
+    userModel.findOne({ userName: userName })
+        .then(async (user) => {
+            if (user) {
+                res.send({message: "Username already taken", isAvailable: false});
+            } else {
+                res.send({message: "Username available", isAvailable: true});
+            }
+        }).catch((err) => {
+            res.status(401).send({message: "Backend error: " + err});
+        });
 }

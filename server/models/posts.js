@@ -20,7 +20,11 @@ const postSchema = new Schema({
     // },
     userId: {
         type: Schema.Types.ObjectId,
-        ref: "Posts"
+        ref: "User",
+    },
+    userName: {
+        type: String,
+        required: true,
     },
     comments: [{
         type: Schema.Types.ObjectId,
@@ -48,6 +52,13 @@ const postSchema = new Schema({
     },
     points: {
         type: Number
+    },
+    pointsRedeemed: {
+        type: Boolean,
+        default: false
+    },
+    acceptedSolution: {
+        type: Schema.Types.ObjectId,
     },
     categories: [{
         type: String,

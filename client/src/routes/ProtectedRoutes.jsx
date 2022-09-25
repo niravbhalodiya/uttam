@@ -9,13 +9,13 @@ const ProtectedRoutes = () => {
     // hooks
     useEffect(() => {
         let isApiSubscribed = true;
-        const isAuthenticated = localStorage.getItem(ACCESS_TOKEN)
+        const isAuthenticated = sessionStorage.getItem(ACCESS_TOKEN)
 
         if (!isAuthenticated) {
             navigate('/auth/signin')
         }
 
-        // dispatch(registrationStatus(localStorage.getItem(MOBILE_NO))).then(res => {
+        // dispatch(registrationStatus(sessionStorage.getItem(MOBILE_NO))).then(res => {
         //     if (isApiSubscribed) {
         //         if (!res.payload.registeredUser) {
         //             navigate('/create-profile')

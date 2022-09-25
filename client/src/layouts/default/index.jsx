@@ -1,13 +1,17 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import Navbar from '../../components/common/Navbar'
+import SerchNav from '../dashboard/SerchNav'
 
-const index = () => {
+const index = ({isSearchedNav = true}) => {
+
     return (
-        <div className='min-h-screen'>
-            <Navbar />
-            <Outlet />
-        </div>
+        <main className='relative min-h-screen'>
+            <SerchNav isSearchedNav={isSearchedNav} />
+            <section className='flex relative container justify-center'>
+                <Outlet />
+            </section>
+            <footer className='h-16 bg-red-400'>sddsdsds</footer>
+        </main>
     )
 }
 

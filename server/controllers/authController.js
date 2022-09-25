@@ -57,7 +57,7 @@ exports.signUp = async (req, res) => {
                     // console.log(process.env.TOKEN_KEY)
                     res.send({token: token,userId: newUser._id});
                 } catch (error) {
-                    res.status(401).send({message: "Unable to create user"});
+                    res.status(401).send({message: "Username or email must not be same"});
                 }
 
             }

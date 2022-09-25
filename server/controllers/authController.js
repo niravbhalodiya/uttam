@@ -17,7 +17,9 @@ exports.login = async (req, res) => {
             const isCorrectPass = await bcrypt.compare(password, user.password);
             // console.log(token)
             if (isCorrectPass) {
+
                 var token = creteToken(user._id)
+
                 // await req.session.save();
                 res.send({token: token,userId: user._id})
             } else {
@@ -40,9 +42,9 @@ exports.signUp = async (req, res) => {
         .then(async (user) => {
             if (user) {
                 res.status(400).send({message: "User already exists with this email"});
+
             } else {
                 try {
-                    
                     const newUser = await userModel.create({
                         email,
                         password: hashedPassword,
@@ -59,7 +61,6 @@ exports.signUp = async (req, res) => {
                 } catch (error) {
                     res.status(401).send({message: "Unable to create user"});
                 }
-
             }
         })
         .catch((err) => {
@@ -74,7 +75,7 @@ exports.askResetPassword = async (req, res) => {
             if (user) {
                 // generate random token
                 const token = crypto.randomBytes(20).toString('hex');
-                
+
                 // Put token in mongo
                 user.resetPasswordToken = token;
                 user.resetPasswordExpires = Date.now() + 3600000;

@@ -91,8 +91,8 @@ exports.postEditPost = async (req, res) => {
     const postId = req.params.postId;
     const updatedTitle = req.body.title;
     const updatedDescription = req.body.description;
-    
-    
+
+
     try {
         let posts = await Post.findByIdAndUpdate(postId);
 
@@ -117,9 +117,9 @@ exports.postDeletePost = async (req,res) => {
 
             deleteFile(post.images[i])
         }
-        
+
             // deleteFile("uploads/1664009659993.png")
-        
+
         post.deleteOne({_id: postId});
         res.send({message: "success"})
     } catch (error) {
@@ -204,7 +204,7 @@ exports.upVote = async(req,res) => {
         if(post.downVoters.includes(userId)) {
             // remove user from downvoters
             post.downVoters = post.downVoters.filter((user) => user != userId);
-            
+
             // decrese downvotes by 1
             post.downVotes -= 1;
         }
@@ -297,7 +297,7 @@ exports.upVoteSolution = async(req,res) => {
                     res.status(401).send({message: "Error upvoting solution"})
                     // console.log(err)
                 })
-        
+
     }
 }
 

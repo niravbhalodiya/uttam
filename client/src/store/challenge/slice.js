@@ -25,6 +25,18 @@ export const getSingleChallenge = createAsyncThunk('getSingleChallenge', async (
         return rejectWithValue(error.response.data)
     }
 })
+// post sol
+export const postSolution = createAsyncThunk('postSolution', async (payload, { rejectWithValue }) => {
+    try {
+        const res = await axiosApi.post(`/user/solution`,payload)
+        return res
+    } catch (error) {
+        if (!error.response) {
+            throw error
+        }
+        return rejectWithValue(error.response.data)
+    }
+})
 
 
 const ChallengeReducer = createSlice({
@@ -62,6 +74,23 @@ const ChallengeReducer = createSlice({
             state.status = 'failed'
             // state.error = action.payload.message
             state.type = 'GET_SINGLE_CHALLENGES'
+        },
+
+        // Post Solution
+        [postSolution.pending]: (state, action) => {
+            state.status = 'loading'
+            state.type = 'POST_SOLUTION'
+        },
+        [postSolution.fulfilled]: (state, action) => {
+            state.status = 'succeed'
+            // state.challenge = action.payload.data.data
+            state.type = 'POST_SOLUTION'
+        },
+        [postSolution.rejected]: (state, action) => {
+            console.log(action);
+            state.status = 'failed'
+            // state.error = action.payload.message
+            state.type = 'POST_SOLUTION'
         },
     },
     reducers: {

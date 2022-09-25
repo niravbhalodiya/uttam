@@ -20,3 +20,9 @@ body {
 .aside-link-sctive{
     @apply bg-mainPurple/20  border-r-4 border-mainPurple
 }
+
+
+/* plugins */
+.ql-container.ql-snow{
+    @apply min-h-[150px]
+}

@@ -3,6 +3,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const session = require('express-session');
 const MongoDBStore = require("connect-mongodb-session")(session);
 require("dotenv").config();
@@ -17,11 +18,9 @@ const User = require("./models/user");
 
 const upload = require("./utils")
 
-
-
-
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(cors());
+app.use(bodyParser.urlencoded({extended: true}));
 // app.use('Content-Type', 'text/html');
 
 

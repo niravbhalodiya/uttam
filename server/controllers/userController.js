@@ -140,7 +140,7 @@ exports.postDeletePost = async (req, res) => {
 exports.postSolution = async (req, res) => {
     const { postId, description } = req.body;
     // const {postId} = req.params;
-    const userId = req.user._id;
+    const userId = req.user;
 
     // create new entry for solution in posts
     const solution = await Solution({
@@ -174,7 +174,7 @@ exports.postSolution = async (req, res) => {
 exports.postComment = async (req, res) => {
     const { postId, description } = req.body;
     // const {postId} = req.params;
-    const userId = req.user._id;
+    const userId = req.user;
 
     // create new entry for solution in posts
     const comment = await Comment({
@@ -276,7 +276,7 @@ exports.downVote = async (req, res) => {
 
 exports.upVoteSolution = async (req, res) => {
     const { solutionId } = req.body;
-    const userId = req.user._id;
+    const userId = req.user;
 
     let solution = await Solution.findById(solutionId);
 
@@ -327,7 +327,7 @@ exports.getSingleUser = async (req, res) => {
 
 exports.downVoteSolution = async (req, res) => {
     const { solutionId } = req.body;
-    const userId = req.user._id;
+    const userId = req.user;
 
     let solution = await Solution.findById(solutionId);
 
@@ -373,4 +373,3 @@ exports.updateSolutionStatus = async (req, res) => {
             // console.log(err)
         })
 }
-

@@ -53,6 +53,13 @@ const postSchema = new Schema({
     points: {
         type: Number
     },
+    pointsRedeemed: {
+        type: Boolean,
+        default: false
+    },
+    acceptedSolution: {
+        type: Schema.Types.ObjectId,
+    },
     categories: [{
         type: String,
     }],

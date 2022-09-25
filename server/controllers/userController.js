@@ -26,6 +26,7 @@ exports.getUser = async (req, res) => {
         res.status(401).send({ message: "Error getting user" })
     }
 }
+
 //Creates new post
 exports.createPost = async (req, res) => {
     const image = req.files;
@@ -171,28 +172,43 @@ exports.postSolution = async (req, res) => {
         })
 }
 
+
 exports.postComment = async (req, res) => {
-    const { postId, description } = req.body;
+    const {postId, solutionId, description} = req.body;
     // const {postId} = req.params;
     const userId = req.user;
 
     // create new entry for solution in posts
     const comment = await Comment({
-        userId: userId,
+        userId,
         description,
         postId,
+        solutionId
     });
 
     comment.save()
         .then((result) => {
-            // add solution id to post
-            Post.findByIdAndUpdate(postId, { $push: { comments: result._id } })
-                .then((result) => {
-                    res.send({ status: res.statusCode, message: "Comment Posted!" });
-                })
-                .catch((err) => {
-                    res.status(401).send({ message: "Error adding solution to post" });
-                })
+            // Check if comment is for a solution or post
+            if (solutionId) {
+                // add comment id to solution
+                Solution.findByIdAndUpdate(solutionId, {$push: {comments: result._id}})
+                    .then((result) => {
+                        res.send({status: res.statusCode, message: "Comment Posted!"});
+                    })
+                    .catch((err) => {
+                        res.status(401).send({message: "Error adding comment to solution"});
+                    })
+                } else if(postId) {
+                    // add comment id in post
+                    Post.findByIdAndUpdate(postId, {$push: {comments: result._id}})
+                    .then((result) => {
+                        res.send({status: res.statusCode, message: "Comment Posted!"});
+                    })
+                    .catch((err) => {
+                        res.status(401).send({message: "Error adding solution to post"});
+                    })
+                }
+            
         })
         .catch((err) => {
             res.status(401).send({ message: "Error posting comment" });
@@ -274,11 +290,11 @@ exports.downVote = async (req, res) => {
 
 }
 
-exports.upVoteSolution = async (req, res) => {
-    const { solutionId } = req.body;
+exports.upVoteSolution = async(req,res) => {
+    const {solutionId} = req.body;
     const userId = req.user;
 
-    let solution = await Solution.findById(solutionId);
+    const solution = await Solution.findById(solutionId);
 
     // check if user has already upvoted
     if (solution.upVoters.includes(userId)) {
@@ -370,6 +386,37 @@ exports.updateSolutionStatus = async (req, res) => {
         })
         .catch((err) => {
             res.status(401).send({ message: "Error updating solution status" })
+            // console.log(err)
+        })
+}
+
+exports.getAcceptedUnRedeemedPosts = async(req,res) => {
+    try {
+        const posts = await Post.find({status: "accepted", redeemed: false});
+        res.send({status: res.statusCode, data: posts});
+    } catch (error) {
+        res.status(401).send({message: "Error getting posts"});
+    }
+}
+
+exports.acceptSolution = async(req,res) => {
+    const {solutionId, postId} = req.body;
+
+    // update solution status to accepted
+    Solution.findByIdAndUpdate(solutionId, {status: "accepted"})
+        .then((result) => {
+            // update post status to accepted
+            Post.findByIdAndUpdate(postId, {acceptedSolution: solutionId})
+                .then((result) => {
+                    res.send({status: res.statusCode, message: "Solution accepted"})
+                })
+                .catch((err) => {
+                    res.status(401).send({message: "Error accepting solution"})
+                    // console.log(err)
+                })
+        })
+        .catch((err) => {
+            res.status(401).send({message: "Error accepting solution"})
             // console.log(err)
         })
 }

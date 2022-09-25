@@ -18,7 +18,7 @@ const auth = async (req, res, next) => {
   try {
     const {_id} = jwt.verify(token, process.env.TOKEN_KEY)
     req.user = _id;
-    // console.log("this is body",req.user)
+    console.log("this is body",req.body)
     next()
   } catch (error) {
      res.status(401).json({message : "Invalid Token"});

@@ -27,16 +27,11 @@ const ProfileCard = () => {
                         </div>
                     </div>
 
-                    <div className="space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center">
+                    <div className="space-x-8 flex justify-end mt-32 md:mt-0 md:justify-end">
                         <button
-                            className="text-white py-2 px-4 uppercase rounded bg-blue-400 hover:bg-blue-500 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5"
+                            className="text-white py-2 px-4 uppercase rounded bg-blue-400 hover:bg-blue-500 shadow hover:shadow-lg font-medium transition transform"
                         >
-                            Connect
-                        </button>
-                        <button
-                            className="text-white py-2 px-4 uppercase rounded bg-gray-700 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5"
-                        >
-                            Message
+                            Edit Profile
                         </button>
                     </div>
                 </div>

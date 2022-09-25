@@ -17,14 +17,14 @@ exports.login = async (req, res) => {
                 var token = await jwt.sign({userId: user._id },process.env.TOKEN_KEY,{
                     expiresIn: "10h"
                 });
-                await req.session.save();
+                // await req.session.save();
                 res.send({token: token,userId: user._id})
             } else {
-                res.send({message: "Error"});
+                res.status(401).send({message: "Error"});
             }
         })
         .catch((err) => {
-            res.send({message: "failed"})
+            res.status(401).send({message: "failed"})
             console.log(err)
         });
 }
@@ -38,10 +38,9 @@ exports.signUp = async (req, res) => {
     userModel.findOne({ email: email })
         .then(async (user) => {
             if (user) {
-                res.send({message: "User already exists with this email"});
+                res.status(401).send({message: "User already exists with this email"});
             } else {
                 try {
-                    
                     const newUser = await userModel.create({
                         email,
                         password: hashedPassword,
@@ -57,9 +56,9 @@ exports.signUp = async (req, res) => {
                     console.log(process.env.TOKEN_KEY)
                     res.send({token: token,userId: newUser._id});
                 } catch (error) {
-                    res.send({message: "Unable to create user"});
+                    console.log(error);
+                    res.status(401).send({message: "Unable to create user"});
                 }
-
             }
         })
         .catch((err) => {
@@ -74,7 +73,7 @@ exports.askResetPassword = async (req, res) => {
             if (user) {
                 // generate random token
                 const token = crypto.randomBytes(20).toString('hex');
-                
+
                 // Put token in mongo
                 user.resetPasswordToken = token;
                 user.resetPasswordExpires = Date.now() + 3600000;

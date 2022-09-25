@@ -1,23 +1,60 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { ErrorMsg } from '../../components/common/MicroComponents'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { setAuth, SignInApi } from '../../store/auth/slice'
+import { useEffect } from 'react'
+import { toast } from 'react-toastify'
+import { ACCESS_TOKEN, USER_ID } from '../../utils/constants'
 
 const SignIn = () => {
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+    const { status, error, type, user } = useSelector(store => store.auth)
+
+    // use stats
+    const [isMiniLoading, setIsMiniLoading] = useState(false)
+
+    useEffect(() => {
+        console.log(status, type);
+        if (status === 'loading') {
+            console.log('loading');
+            setIsMiniLoading(true)
+        } else if (status === 'succeed') {
+            console.log('succeed');
+            if (type === 'SIGN_IN_API') {
+                sessionStorage.setItem(ACCESS_TOKEN, user.token)
+                sessionStorage.setItem(USER_ID, user.userId)
+                toast.success("Sign In successfully")
+                dispatch(setAuth())
+                navigate('/challenges')
+            }
+        } else if (status === 'failed') {
+            toast.error(error)
+        }
+        return () => { }
+    }, [type, status])
+
+
+    const handleSignIn = (values) => {
+        dispatch(SignInApi(values))
+        // SignUpApi(values)
+    }
 
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
             email: "",
-            password: null,
+            password: '',
         },
         validationSchema: Yup.object().shape({
             email: Yup.string().email().required(),
             password: Yup.string().nullable().required('Password is Required').matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, 'Minimum eight characters, at least one letter, one number and one special character'),
         }),
         onSubmit: (values) => {
-            console.log(values);
+            handleSignIn(values);
         }
     })
 
@@ -25,7 +62,6 @@ const SignIn = () => {
 
     return (
         <div className="min-h-screen flex justify-center items-center">
-            {console.log(errors, touched)}
             <div className="container mx-auto px-4 h-full">
                 <div className="flex content-center items-center justify-center h-full ">
                     <div className="w-full lg:w-5/12 px-4">
@@ -43,7 +79,7 @@ const SignIn = () => {
                                 <form onSubmit={handleSubmit}>
                                     <div className="relative w-full mb-3">
                                         <label className="block uppercase  text-xs font-bold mb-2"
-                                            for="grid-password">Email</label>
+                                            htmlhtmlFor="grid-password">Email</label>
                                         <input
                                             name='email'
                                             onChange={handleChange}
@@ -57,9 +93,10 @@ const SignIn = () => {
                                     </div>
                                     <div className="relative w-full mb-3">
                                         <label className="block uppercase  text-xs font-bold mb-2"
-                                            for="grid-password">Password</label>
+                                            htmlhtmlFor="grid-password">Password</label>
                                         <input
                                             name='password'
+                                            autoComplete='off'
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                             value={values.password}

@@ -20,7 +20,7 @@ const Hero = () => {
                         </Link>
                         <Link to={'/challenges'} className="inline-flex min-w-[200px] items-center justify-cejustify-startnter gap-4 w-full px-5 py-3 text-sm font-medium text-center text-gray-900 border border-gray-200 rounded-lg sm:w-auto hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 ">
                             <MdQuestionAnswer fontSize={20} />
-                            <span className='capitalize'>browse questions</span>
+                            <span className='capitalize'>browse challenges</span>
                         </Link>
                     </div>
                 </div>

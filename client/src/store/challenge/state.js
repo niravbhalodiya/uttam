@@ -1,7 +1,8 @@
-export default{
-    status:null,
-    error:null,
-    type:null,
+export default {
+    status: null,
+    error: null,
+    type: null,
 
-    // user:null
+    allChallenges: [],
+    challenge: {}
 }

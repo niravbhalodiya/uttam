@@ -1,17 +1,44 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { ErrorMsg } from '../../components/common/MicroComponents'
-import { Link } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { SignUpApi } from '../../store/auth/slice'
+import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { setAuth, SignUpApi } from '../../store/auth/slice'
+import { toast } from 'react-toastify'
+import { ACCESS_TOKEN, USER_ID } from '../../utils/constants'
 
 const SignUp = () => {
     const dispatch = useDispatch()
+    const navigate = useNavigate()
+    const { status, error, type, user } = useSelector(store => store.auth)
+
+    // use stats
+    const [isMiniLoading, setIsMiniLoading] = useState(false)
+
+    useEffect(() => {
+        console.log(status, type);
+        if (status === 'loading') {
+            console.log('loading');
+            setIsMiniLoading(true)
+        } else if (status === 'succeed') {
+            console.log('succeed');
+            if (type === 'SIGN_UP_API') {
+                sessionStorage.setItem(ACCESS_TOKEN, user.token)
+                sessionStorage.setItem(USER_ID, user.userId)
+                toast.success("Sign In successfully")
+                dispatch(setAuth())
+                navigate('/challenges')
+            }
+        }
+        else {
+            toast.error(error)
+        }
+        return () => { }
+    }, [type, status])
 
     const handleSignUp = (values) => {
         dispatch(SignUpApi(values))
-        console.log(values);
         // SignUpApi(values)
     }
 
@@ -73,6 +100,7 @@ const SignUp = () => {
                                                 for="grid-password">User Name</label>
                                             <input
                                                 name='userName'
+                                                autoComplete='off'
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
                                                 value={values.userName}
@@ -103,6 +131,7 @@ const SignUp = () => {
                                             for="grid-password">Password</label>
                                         <input
                                             name='password'
+                                            autoComplete='off'
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                             value={values.password}

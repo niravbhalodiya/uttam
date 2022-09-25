@@ -13,15 +13,15 @@ export const Aside = () => {
                 <ul className='pl-2 text-sm'>
                     <li className='aside-link aside-link-sctive'>
                         <span><IoEarthSharp fontSize={16} /></span>
-                        <Link to={'/'}>Challenge</Link>
+                        <Link to={'/challenges'}>Challenge</Link>
                     </li>
                     <li className='aside-link'>
                         <span><FaTags fontSize={16} /></span>
-                        <Link to={'/'}>Tags</Link>
+                        <Link to={'/tags'}>Tags</Link>
                     </li>
                     <li className='aside-link'>
                         <span><FaUsers fontSize={16} /></span>
-                        <Link to={'/'}>Users</Link>
+                        <Link to={'/users'}>Users</Link>
                     </li>
                 </ul>
             </nav>

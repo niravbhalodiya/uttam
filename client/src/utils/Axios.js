@@ -8,13 +8,13 @@ export const axiosAuthApi = axios.create({ baseURL: base_url_auth })
 
 export const multipartHeader = {
     headers: {
-        ["Authorization"]: 'Bearer ' + localStorage.getItem(ACCESS_TOKEN),
+        ["Authorization"]: 'Bearer ' + sessionStorage.getItem(ACCESS_TOKEN),
         ['content-type']: 'multipart/form-data',
     },
 }
 
 
-if (localStorage.getItem(ACCESS_TOKEN)) {
-    axiosApi.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`
+if (sessionStorage.getItem(ACCESS_TOKEN)) {
+    axiosApi.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem(ACCESS_TOKEN)}`
     axiosApi.defaults.headers.get["Content-Type"] = "application/json"
 }

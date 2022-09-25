@@ -1,12 +1,19 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
 
 // reducers
 import AuthReducer from './auth/slice'
 import ChallengeReducer from './challenge/slice'
 
+const rootReducer = {
+    auth: AuthReducer,
+    challenge: ChallengeReducer,
+}
+
+const customizedMiddleware = getDefaultMiddleware({
+    serializableCheck: false,
+});
+
 export const store = configureStore({
-    reducer: {
-        auth: AuthReducer,
-        challenge: ChallengeReducer,
-    }
+    reducer: rootReducer,
+    middleware: customizedMiddleware
 })

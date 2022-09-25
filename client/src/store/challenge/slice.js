@@ -2,12 +2,27 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosApi } from "../../utils/Axios";
 import state from "./state";
 
-export const getAllChallenges = createAsyncThunk('getAllChallenges',async (payload, {rejectWithValue}) => {
+export const getAllChallenges = createAsyncThunk('getAllChallenges', async (payload, { rejectWithValue }) => {
     try {
-        const res = axiosApi.post('/user/login', payload)
+        const res = await axiosApi.get('/user/get-all-posts')
         return res
     } catch (error) {
-        console.log(error);
+        if (!error.response) {
+            throw error
+        }
+        return rejectWithValue(error.response.data)
+    }
+})
+// get single post
+export const getSingleChallenge = createAsyncThunk('getSingleChallenge', async (id, { rejectWithValue }) => {
+    try {
+        const res = await axiosApi.get(`/user/getpost/${id}`)
+        return res
+    } catch (error) {
+        if (!error.response) {
+            throw error
+        }
+        return rejectWithValue(error.response.data)
     }
 })
 
@@ -15,7 +30,40 @@ export const getAllChallenges = createAsyncThunk('getAllChallenges',async (paylo
 const ChallengeReducer = createSlice({
     name: "challengeReducer",
     initialState: state,
-    extraReducers: {},
+    extraReducers: {
+        // Get All Challenges
+        [getAllChallenges.pending]: (state, action) => {
+            state.status = 'loading'
+            state.type = 'GET_ALL_CHALLENGES'
+        },
+        [getAllChallenges.fulfilled]: (state, action) => {
+            state.status = 'succeed'
+            state.allChallenges = action.payload.data.data
+            state.type = 'GET_ALL_CHALLENGES'
+        },
+        [getAllChallenges.rejected]: (state, action) => {
+            state.status = 'failed'
+            state.error = action.payload.message
+            state.type = 'GET_ALL_CHALLENGES'
+        },
+
+        // Get Single Challenge
+        [getSingleChallenge.pending]: (state, action) => {
+            state.status = 'loading'
+            state.type = 'GET_SINGLE_CHALLENGES'
+        },
+        [getSingleChallenge.fulfilled]: (state, action) => {
+            state.status = 'succeed'
+            state.challenge = action.payload.data.data
+            state.type = 'GET_SINGLE_CHALLENGES'
+        },
+        [getSingleChallenge.rejected]: (state, action) => {
+            console.log(action);
+            state.status = 'failed'
+            // state.error = action.payload.message
+            state.type = 'GET_SINGLE_CHALLENGES'
+        },
+    },
     reducers: {
         setChallange: (state, action) => {
             state.status = null

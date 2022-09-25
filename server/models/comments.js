@@ -9,39 +9,17 @@ const commentSchema = new Schema({
     },
     images: [{
         type: String,
-        required: true
+        // required: true
     }],
     description: {
         type: String,
         required: true
     },
-    post: {
+    postId: {
         type: Schema.Types.ObjectId,
         ref: 'Post',
         required: true
-    },
-    // comments: {
-    //    replies: [
-    //        {
-    //         name: {
-    //             type: String,
-    //             required: true
-    //         },
-    //         email: {
-    //             type: String,
-    //             required: true
-    //         },
-    //         subject: {
-    //             type: String,
-    //             required: true
-    //         },
-    //         message: {
-    //             type: String,
-    //             required: true
-    //         },
-    //     }
-    //    ]
-    // }
+    }
     
 },{timestamps:true});
 

@@ -9,13 +9,13 @@ const solutionSchema = new Schema({
     },
     images: [{
         type: String,
-        required: true
+        // required: true
     }],
     description: {
         type: String,
         required: true
     },
-    post: {
+    postId: {
         type: Schema.Types.ObjectId,
         ref: 'Post',
         required: true
@@ -23,7 +23,19 @@ const solutionSchema = new Schema({
     status : {
         type: String,
         required: true,
-    }
+    },
+    upVotes: {
+        type: Number
+    },
+    downVotes: {
+        type: Number
+    },
+    upVoters: [{
+        type: Schema.Types.ObjectId,
+    }],
+    downVoters: [{
+        type: Schema.Types.ObjectId,
+    }],
     
 },{timestamps:true});
 

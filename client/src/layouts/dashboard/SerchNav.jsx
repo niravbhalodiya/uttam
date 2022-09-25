@@ -77,7 +77,7 @@ const SerchNav = ({ isSearchedNav }) => {
                             </div>
                         ) : (
                             <div>
-                                <Link to={'/auth/signin'} className="text-gray-800 hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 sm:mr-2 focus:outline-none">
+                                <Link to={'/auth/signin'} className=" hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 sm:mr-2 focus:outline-none">
                                     Sign In
                                 </Link>
                                 <Link to={'/auth/signup'} className="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 sm:mr-2 lg:mr-0 focus:outline-none">

@@ -126,7 +126,7 @@ const SignIn = () => {
                         </div>
                         <div className="flex flex-wrap mt-6">
                             <div className="w-1/2">
-                                <a href="#pablo" className=""><small>Forgot password?</small></a>
+                                <Link to={'/auth/reset-password'} className=""><small>Forgot password?</small></Link>
                             </div>
                             <Link to={'/auth/signup'} className="w-1/2 text-right">
                                 <small>Create new account</small>

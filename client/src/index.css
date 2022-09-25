@@ -26,3 +26,6 @@ body {
 .ql-container.ql-snow{
     @apply min-h-[150px]
 }
+.ql-editor.ql-blank{
+    @apply min-h-[150px]
+}

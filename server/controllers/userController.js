@@ -4,9 +4,9 @@ const { deleteFile } = require("../utils")
 const Post = require("../models/posts");
 const Solution = require("../models/solutions");
 const Comment = require("../models/comments");
-const {uploadFile} = require("../s3");
+const { uploadFile } = require("../s3");
 
- // const User - 
+// const User -
 const upload = require("../utils")
 let User = require('../models/user');
 
@@ -19,7 +19,7 @@ exports.getUser = async (req, res) => {
     const { userId } = req.params;
     try {
         let user = await userModel.findById(userId);
-        // making sure that the password is not sent to the client 
+        // making sure that the password is not sent to the client
         user.password = undefined;
         res.send({ status: res.statusCode, body: user })
     } catch (error) {
@@ -32,14 +32,14 @@ exports.createPost = async (req, res) => {
     const image = req.files;
     const { title, description, tags, categories } = req.body;
     // console.log(req.files);
-    
+
     let images = [];
     try {
         const user = await User.findById(req.user);
         // console.log(user)
         if (image) {
             for (i = 0; i <= req.files.length - 1; i++) {
-                
+
                 fileName = req.files[i].filename;
                 imgPath = "uploads/" + fileName;
                 images.push(imgPath)
@@ -48,19 +48,19 @@ exports.createPost = async (req, res) => {
         }
         if (req.user) {
 
-            const post = await Post({ title, description, images: images, userId: req.user, upVotes: 0,userName: user.userName, downVotes: 0, status: "pending" ,tags:tags, categories:categories});
+            const post = await Post({ title, description, images: images, userId: req.user, upVotes: 0, userName: user.userName, downVotes: 0, status: "pending", tags: tags, categories: categories });
             post.save().then((result) => {
                 res.send({ data: result })
             }).catch((err) => {
                 // console.log(err)
-                res.status(401).send({message: "Please enter all the required fields"})
+                res.status(401).send({ message: "Please enter all the required fields" })
             })
         }
 
 
     } catch (err) {
         // console.log(err);
-        return res.status(400).send({message: "no data"})
+        return res.status(400).send({ message: "no data" })
     }
 
 }
@@ -88,10 +88,9 @@ exports.getEditPost = async (req, res) => {
 
     const posts = await Post.findById(postId);
     if (posts) {
-
-        res.send({ status: res.statusCode, data: posts });
+        return res.status(200).send({ status: res.statusCode, data: posts });
     }
-    res.status(400).send({message: "No posts found"})
+    return res.status(401).send({ message: "No posts found" })
 }
 
 
@@ -134,7 +133,7 @@ exports.postDeletePost = async (req, res) => {
         res.send({ message: "success" })
     } catch (error) {
         // console.log(error)
-        res.status(401).send({message: "Posts not found"})
+        res.status(401).send({ message: "Posts not found" })
     }
 }
 
@@ -142,6 +141,7 @@ exports.postSolution = async (req, res) => {
     const { postId, description } = req.body;
     // const {postId} = req.params;
     const userId = req.user;
+    console.log(userId);
 
     // create new entry for solution in posts
     const solution = await Solution({
@@ -174,7 +174,7 @@ exports.postSolution = async (req, res) => {
 
 
 exports.postComment = async (req, res) => {
-    const {postId, solutionId, description} = req.body;
+    const { postId, solutionId, description } = req.body;
     // const {postId} = req.params;
     const userId = req.user;
 
@@ -191,24 +191,24 @@ exports.postComment = async (req, res) => {
             // Check if comment is for a solution or post
             if (solutionId) {
                 // add comment id to solution
-                Solution.findByIdAndUpdate(solutionId, {$push: {comments: result._id}})
+                Solution.findByIdAndUpdate(solutionId, { $push: { comments: result._id } })
                     .then((result) => {
-                        res.send({status: res.statusCode, message: "Comment Posted!"});
+                        res.send({ status: res.statusCode, message: "Comment Posted!" });
                     })
                     .catch((err) => {
-                        res.status(401).send({message: "Error adding comment to solution"});
+                        res.status(401).send({ message: "Error adding comment to solution" });
                     })
-                } else if(postId) {
-                    // add comment id in post
-                    Post.findByIdAndUpdate(postId, {$push: {comments: result._id}})
+            } else if (postId) {
+                // add comment id in post
+                Post.findByIdAndUpdate(postId, { $push: { comments: result._id } })
                     .then((result) => {
-                        res.send({status: res.statusCode, message: "Comment Posted!"});
+                        res.send({ status: res.statusCode, message: "Comment Posted!" });
                     })
                     .catch((err) => {
-                        res.status(401).send({message: "Error adding solution to post"});
+                        res.status(401).send({ message: "Error adding solution to post" });
                     })
-                }
-            
+            }
+
         })
         .catch((err) => {
             res.status(401).send({ message: "Error posting comment" });
@@ -290,8 +290,8 @@ exports.downVote = async (req, res) => {
 
 }
 
-exports.upVoteSolution = async(req,res) => {
-    const {solutionId} = req.body;
+exports.upVoteSolution = async (req, res) => {
+    const { solutionId } = req.body;
     const userId = req.user;
 
     const solution = await Solution.findById(solutionId);
@@ -329,7 +329,7 @@ exports.upVoteSolution = async(req,res) => {
 
 
 exports.getAllPosts = async (req, res) => {
-    const posts = await Post.find().sort({updatedAt: 1});
+    const posts = await Post.find().sort({ updatedAt: 1 });
 
     res.send({ status: res.send.statusCode, data: posts });
 }
@@ -390,33 +390,43 @@ exports.updateSolutionStatus = async (req, res) => {
         })
 }
 
-exports.getAcceptedUnRedeemedPosts = async(req,res) => {
+exports.getAcceptedUnRedeemedPosts = async (req, res) => {
     try {
-        const posts = await Post.find({status: "accepted", redeemed: false});
-        res.send({status: res.statusCode, data: posts});
+        const posts = await Post.find({ status: "accepted", redeemed: false });
+        res.send({ status: res.statusCode, data: posts });
     } catch (error) {
-        res.status(401).send({message: "Error getting posts"});
+        res.status(401).send({ message: "Error getting posts" });
     }
 }
 
-exports.acceptSolution = async(req,res) => {
-    const {solutionId, postId} = req.body;
+exports.acceptSolution = async (req, res) => {
+    const { solutionId, postId } = req.body;
 
     // update solution status to accepted
-    Solution.findByIdAndUpdate(solutionId, {status: "accepted"})
+    Solution.findByIdAndUpdate(solutionId, { status: "accepted" })
         .then((result) => {
             // update post status to accepted
-            Post.findByIdAndUpdate(postId, {acceptedSolution: solutionId})
+            Post.findByIdAndUpdate(postId, { acceptedSolution: solutionId })
                 .then((result) => {
-                    res.send({status: res.statusCode, message: "Solution accepted"})
+                    res.send({ status: res.statusCode, message: "Solution accepted" })
                 })
                 .catch((err) => {
-                    res.status(401).send({message: "Error accepting solution"})
+                    res.status(401).send({ message: "Error accepting solution" })
                     // console.log(err)
                 })
         })
         .catch((err) => {
-            res.status(401).send({message: "Error accepting solution"})
+            res.status(401).send({ message: "Error accepting solution" })
             // console.log(err)
         })
+}
+
+exports.getSolutionByPostId = async (req, res) => {
+    try {
+        const { postId } = req.params;
+        const solutions = await Solution.find({ postId });
+        res.send({ status: res.statusCode, data: solutions });
+    } catch (error) {
+        res.status(401).send({ message: "Error getting solutions" });
+    }
 }

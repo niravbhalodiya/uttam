@@ -59,14 +59,11 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(upload.array("files",5))
 //Routes
-app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/search", searchRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-
-
-
 
 mongoose.connect(process.env.MONGO_URL).then((res) => {
     app.listen(process.env.PORT);

@@ -60,9 +60,6 @@ const postSchema = new Schema({
     acceptedSolution: {
         type: Schema.Types.ObjectId,
     },
-    categories: [{
-        type: String,
-    }],
     tags: [{
         type: String,
     }],

@@ -29,6 +29,32 @@ export const SignUpApi = createAsyncThunk('SignUpApi', async (payload, { rejectW
     }
 })
 
+// reset link
+export const resetLink = createAsyncThunk('resetLink', async (payload, { rejectWithValue }) => {
+    try {
+        const res = await axiosApi.post('/auth/forgot-password', payload)
+        return res
+    } catch (error) {
+        if (!error.response) {
+            throw error
+        }
+        return rejectWithValue(error.response.data)
+    }
+})
+
+// reset password
+export const resetPassword = createAsyncThunk('resetPassword', async (payload, { rejectWithValue }) => {
+    try {
+        const res = await axiosApi.post('/auth/reset-password/', payload)
+        return res
+    } catch (error) {
+        if (!error.response) {
+            throw error
+        }
+        return rejectWithValue(error.response.data)
+    }
+})
+
 
 const AuthReducer = createSlice({
     name: "authReducer",
@@ -65,6 +91,40 @@ const AuthReducer = createSlice({
             state.status = 'failed'
             state.error = action.payload.message
             state.type = 'SIGN_UP_API'
+        },
+
+        // Reset Link
+        [resetLink.pending]: (state, action) => {
+            state.status = 'loading'
+            state.type = 'RESET_LINK'
+        },
+        [resetLink.fulfilled]: (state, action) => {
+            state.status = 'succeed'
+            // state.user = action.payload.data
+            state.type = 'RESET_LINK'
+        },
+        [resetLink.rejected]: (state, action) => {
+            console.log(action);
+            state.status = 'failed'
+            state.error = action.payload.message
+            state.type = 'RESET_LINK'
+        },
+
+        // Reset Password
+        [resetPassword.pending]: (state, action) => {
+            state.status = 'loading'
+            state.type = 'RESET_PASSWORD'
+        },
+        [resetPassword.fulfilled]: (state, action) => {
+            state.status = 'succeed'
+            // state.user = action.payload.data
+            state.type = 'RESET_PASSWORD'
+        },
+        [resetPassword.rejected]: (state, action) => {
+            console.log(action);
+            state.status = 'failed'
+            state.error = action.payload.message
+            state.type = 'RESET_PASSWORD'
         },
     },
     reducers: {

@@ -2,7 +2,7 @@ const userModel = require("../models/user")
 let bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
 let crypto = require('crypto');
-const {sendMail} = require("../utils");
+const { sendMail } = require("../utils");
 
 const creteToken = (_id) => {
     return jwt.sign({ _id }, process.env.TOKEN_KEY, { expiresIn: '1d' })
@@ -21,13 +21,13 @@ exports.login = async (req, res) => {
                 var token = creteToken(user._id)
 
                 // await req.session.save();
-                res.send({token: token,userId: user._id})
+                res.send({ token: token, userId: user._id })
             } else {
-                res.status(401).send({message: "Error"});
+                res.status(401).send({ message: "Error" });
             }
         })
         .catch((err) => {
-            res.status(401).send({message: "User with this email not found"})
+            res.status(401).send({ message: "User with this email not found" })
             console.log(err)
         });
 }
@@ -41,7 +41,7 @@ exports.signUp = async (req, res) => {
     userModel.findOne({ email: email })
         .then(async (user) => {
             if (user) {
-                res.status(400).send({message: "User already exists with this email"});
+                res.status(400).send({ message: "User already exists with this email" });
 
             } else {
                 try {
@@ -57,9 +57,9 @@ exports.signUp = async (req, res) => {
                     var token = creteToken(newUser._id)
 
                     // console.log(process.env.TOKEN_KEY)
-                    res.send({token: token,userId: newUser._id});
+                    res.send({ token: token, userId: newUser._id });
                 } catch (error) {
-                    res.status(401).send({message: "Username or email must not be same"});
+                    res.status(401).send({ message: "Username or email must not be same" });
                 }
             }
         })
@@ -82,17 +82,18 @@ exports.askResetPassword = async (req, res) => {
                 await user.save();
 
                 // generate reset link
-                const link = `http://${process.env.URL}/reset/${token}`;
+                const link = `http://127.0.0.1:3100/auth/reset-password/${token}`;
+                // const link = `http://${process.env.URL}/auth/reset-password/${token}`;
 
                 // send email
-                //sendMail(email, "Reset Password", `Click on the link to reset your password: ${link}`);
-                res.send({message: "Email sent"});
+                sendMail(email, "Reset Password", `Click on the link to reset your password: ${link}`);
+                res.send({ message: "Email sent" });
 
             } else {
-                res.status(400).send({message: "User does not exist"});
+                res.status(400).send({ message: "User does not exist" });
             }
         }).catch((err) => {
-            res.status(401).send({message: "Backend error: " + err});
+            res.status(401).send({ message: "Backend error: " + err });
         });
 }
 
@@ -109,19 +110,19 @@ exports.resetPassword = async (req, res) => {
                 user.resetPasswordExpires = undefined;
                 await user.save();
                 //sendMail(user.email, "Password Changed", "Your password has been changed");
-                res.send({message: "Password reset successful"});
+                res.send({ message: "Password reset successful" });
             } else {
-                res.status(400).send({message: "Password reset link is invalid or has expired"});
+                res.status(400).send({ message: "Password reset link is invalid or has expired" });
             }
         }).catch((err) => {
-            res.status(401).send({message: "Backend error: " + err});
+            res.status(401).send({ message: "Backend error: " + err });
         });
 }
 
-exports.postLogout = async (req,res) => {
+exports.postLogout = async (req, res) => {
     req.session.destroy((err) => {
-        res.send({message: "success"})
-      });
+        res.send({ message: "success" })
+    });
 }
 
 exports.isUserNameAvailable = async (req, res) => {
@@ -129,11 +130,11 @@ exports.isUserNameAvailable = async (req, res) => {
     userModel.findOne({ userName: userName })
         .then(async (user) => {
             if (user) {
-                res.send({message: "Username already taken", isAvailable: false});
+                res.send({ message: "Username already taken", isAvailable: false });
             } else {
-                res.send({message: "Username available", isAvailable: true});
+                res.send({ message: "Username available", isAvailable: true });
             }
         }).catch((err) => {
-            res.status(401).send({message: "Backend error: " + err});
+            res.status(401).send({ message: "Backend error: " + err });
         });
 }

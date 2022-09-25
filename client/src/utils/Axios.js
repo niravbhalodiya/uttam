@@ -15,6 +15,6 @@ export const multipartHeader = {
 
 
 if (sessionStorage.getItem(ACCESS_TOKEN)) {
-    axiosApi.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem(ACCESS_TOKEN)}`
+    axiosApi.defaults.headers.common['Authorization'] = 'Bearer ' + sessionStorage.getItem(ACCESS_TOKEN)
     axiosApi.defaults.headers.get["Content-Type"] = "application/json"
 }

@@ -35,14 +35,18 @@ const Challenges = () => {
 
     return (
         <>
-            <div className='flex flex-col justify-center flex-1 py-4'>
+            <div className='flex flex-col flex-1 p-4 h-full justify-start '>
+                <div className='flex justify-between items-center mb-8'>
+                    <h2 className='font-bold text-2xl'>All challenges</h2>
+                    <Link to={'/challenges/ask'} className='bg-mainPurple px-3 py-2 text-white rounded-md'>Ask Challenge</Link>
+                </div>
                 {allChallenges.map((challenge, index) => {
                     return (
                         <Link
                             key={challenge._id}
                             to={`/challenges/${challenge._id}`}
                             state={{ key: challenge._id }}
-                            className='border p-4 m-2 flex divide-x-2 justify-start max-w-3xl w-full group cursor-pointer'>
+                            className='border p-4 mb-4 flex divide-x-2 justify-start max-w-3xl w-full group cursor-pointer'>
                             <div className='flex flex-col gap-2 pr-4 w-8 justify-center items-center shrink-0 select-none'>
                                 <span className='cursor-pointer' onClick={() => incrementCount(index)}>
                                     <FaAngleUp fontSize='25' />

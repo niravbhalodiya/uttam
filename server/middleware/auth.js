@@ -3,9 +3,9 @@ const User = require("../models/user");
 
 const auth = async (req, res, next) => {
     // if (!req.session.isLoggedIn) {
-        // return res.redirect("/login");
+    // return res.redirect("/login");
     // }
-    const {authorization} = req.headers;
+    const { authorization } = req.headers;
     // console.log(authorization)
 
     if (!authorization) return res.status(401).json({
@@ -15,15 +15,15 @@ const auth = async (req, res, next) => {
     // console.log(token);
 
     // console.log(jwt.verify(token, process.env.TOKEN_KEY));
-  try {
-    const {_id} = jwt.verify(token, process.env.TOKEN_KEY)
-    req.user = _id;
-    console.log("this is body",req.body)
-    next()
-  } catch (error) {
-     res.status(401).json({message : "Invalid Token"});
-     return;
-  }
+    try {
+        const { _id } = jwt.verify(token, process.env.TOKEN_KEY)
+        req.user = _id;
+        console.log("this is body", req.body)
+        next()
+    } catch (error) {
+        res.status(401).json({ message: "Invalid Token" });
+        return;
+    }
     // next();
 };
 

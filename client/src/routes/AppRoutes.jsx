@@ -19,6 +19,7 @@ import Profile from '../pages/user/Profile';
 import Tag from '../pages/main/Tags';
 import Users from '../pages/main/Users';
 import SingleChallenge from '../pages/main/SingleChallenge';
+import ForgotPassword from '../pages/auth/ForgotPassword';
 
 const AppRoutes = () => {
     return (
@@ -39,21 +40,23 @@ const AppRoutes = () => {
                     <Route path='/tags' element={<Tag />} />
                     <Route path='/users' element={<Users />} />
                     <Route path='/challenges' element={<Challenge />} />
-                    <Route path='/challenges/:id' element={<SingleChallenge />} />
                     <Route path='/challenges/ask' element={<AskQuestion />} />
+                    <Route path='/challenges/:id' element={<SingleChallenge />} />
                 </Route>
                 <Route element={<ProtectedRoutes />}>
                     <Route element={<DefaultLayout />}>
                         <Route path='dashboard/*' element={<Dashboard />} />
                         <Route path='user/profile' element={<Profile />} />
                     </Route>
+                </Route>
                     <Route element={<DefaultLayout isSearchedNav={'false'} />}>
                         <Route index element={<Home />} />
                     </Route>
-                </Route>
                 <Route path="auth" element={<AuthLayout />} >
                     <Route path="signin" element={<SignIn />} />
                     <Route path="signup" element={<SignUp />} />
+                    <Route path="reset-password" element={<ForgotPassword />} />
+                    <Route path="reset-password/:id" element={<ForgotPassword />} />
                 </Route>
             </Routes>
         </Suspense>

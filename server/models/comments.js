@@ -18,7 +18,10 @@ const commentSchema = new Schema({
     postId: {
         type: Schema.Types.ObjectId,
         ref: 'Post',
-        required: true
+    },
+    solutionId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Solution',
     }
     
 },{timestamps:true});

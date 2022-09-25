@@ -25,6 +25,7 @@ exports.getUser = async(req,res) => {
         res.status(401).send({message: "Error getting user"})
     }
 }
+
 //Creates new post
 exports.createPost = async (req, res) => {
     const image = req.files;
@@ -130,7 +131,7 @@ exports.postDeletePost = async (req,res) => {
 exports.postSolution = async(req,res) => {
     const {postId, description} = req.body;
     // const {postId} = req.params;
-    const userId = req.user._id;
+    const userId = req.user;
 
     // create new entry for solution in posts
     const solution = await Solution({
@@ -162,27 +163,42 @@ exports.postSolution = async(req,res) => {
 }
 
 exports.postComment = async(req,res) => {
-    const {postId, description} = req.body;
+    const {postId, solutionId, description} = req.body;
+
     // const {postId} = req.params;
-    const userId = req.user._id;
+    const userId = req.user;
 
     // create new entry for solution in posts
     const comment = await Comment({
         userId: userId, 
         description,
         postId,
+        solutionId
     });
 
     comment.save()
         .then((result) => {
-            // add solution id to post
-            Post.findByIdAndUpdate(postId, {$push: {comments: result._id}})
-                .then((result) => {
-                    res.send({status: res.statusCode, message: "Comment Posted!"});
-                })
-                .catch((err) => {
-                    res.status(401).send({message: "Error adding solution to post"});
-                })
+            // Check if comment is for a solution or post
+            if (solutionId) {
+                // add comment id to solution
+                Solution.findByIdAndUpdate(solutionId, {$push: {comments: result._id}})
+                    .then((result) => {
+                        res.send({status: res.statusCode, message: "Comment Posted!"});
+                    })
+                    .catch((err) => {
+                        res.status(401).send({message: "Error adding comment to solution"});
+                    })
+                } else if(postId) {
+                    // add comment id in post
+                    Post.findByIdAndUpdate(postId, {$push: {comments: result._id}})
+                    .then((result) => {
+                        res.send({status: res.statusCode, message: "Comment Posted!"});
+                    })
+                    .catch((err) => {
+                        res.status(401).send({message: "Error adding solution to post"});
+                    })
+                }
+            
         })
         .catch((err) => {
             res.status(401).send({message: "Error posting comment"});
@@ -192,7 +208,7 @@ exports.postComment = async(req,res) => {
 
 exports.upVote = async(req,res) => {
     const {postId} = req.body;
-    const userId = req.user._id;
+    const userId = req.user;
 
     const post = await Post.findById(postId);
 
@@ -229,7 +245,7 @@ exports.upVote = async(req,res) => {
 
 exports.downVote = async(req,res) => {
     const {postId} = req.body;
-    const userId = req.user._id;
+    const userId = req.user;
 
     const post = await Post.findById(postId);
 
@@ -266,9 +282,9 @@ exports.downVote = async(req,res) => {
 
 exports.upVoteSolution = async(req,res) => {
     const {solutionId} = req.body;
-    const userId = req.user._id;
+    const userId = req.user;
 
-    let solution = await Solution.findById(solutionId);
+    const solution = await Solution.findById(solutionId);
 
     // check if user has already upvoted
     if(solution.upVoters.includes(userId)) {
@@ -288,7 +304,7 @@ exports.upVoteSolution = async(req,res) => {
             // add user to upvoters
             solution.upVoters.push(userId);
 
-            // save post
+            // save solution
             solution.save()
                 .then((result) => {
                     res.send({status: res.statusCode, body: result, message: "Solution upvoted"})
@@ -317,7 +333,7 @@ exports.getSingleUser = async (req,res) => {
 
 exports.downVoteSolution = async(req,res) => {
     const {solutionId} = req.body;
-    const userId = req.user._id;
+    const userId = req.user;
 
     let solution = await Solution.findById(solutionId);
 
@@ -362,5 +378,35 @@ exports.updateSolutionStatus = async(req,res) => {
             res.status(401).send({message: "Error updating solution status"})
             // console.log(err)
         })
-    }
+}
 
+exports.getAcceptedUnRedeemedPosts = async(req,res) => {
+    try {
+        const posts = await Post.find({status: "accepted", redeemed: false});
+        res.send({status: res.statusCode, data: posts});
+    } catch (error) {
+        res.status(401).send({message: "Error getting posts"});
+    }
+}
+
+exports.acceptSolution = async(req,res) => {
+    const {solutionId, postId} = req.body;
+
+    // update solution status to accepted
+    Solution.findByIdAndUpdate(solutionId, {status: "accepted"})
+        .then((result) => {
+            // update post status to accepted
+            Post.findByIdAndUpdate(postId, {acceptedSolution: solutionId})
+                .then((result) => {
+                    res.send({status: res.statusCode, message: "Solution accepted"})
+                })
+                .catch((err) => {
+                    res.status(401).send({message: "Error accepting solution"})
+                    // console.log(err)
+                })
+        })
+        .catch((err) => {
+            res.status(401).send({message: "Error accepting solution"})
+            // console.log(err)
+        })
+}
